@@ -5,7 +5,8 @@ export default class Dofus2PacketAnalyzer {
     private readonly reader: ReaderBigEndianStream =
         new ReaderBigEndianStream();
 
-    analyze(client_side: boolean): Array<Dofus2Packet> {
+    analyze(buffer: Buffer, client_side: boolean): Array<Dofus2Packet> {
+        this.reader.add(buffer, buffer.length);
         const result: Array<Dofus2Packet> = [];
 
         while (this.reader.remnant_size() > 0) {
