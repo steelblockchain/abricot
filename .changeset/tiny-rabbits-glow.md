@@ -1,5 +1,5 @@
 ---
-"abricot": minor
+"abricot": patch
 ---
 
 just for test
