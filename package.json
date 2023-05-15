@@ -25,6 +25,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "node-cache": "^5.1.2",
     "typed-emitter": "^2.1.0"
   }
 }

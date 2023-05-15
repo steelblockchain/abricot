@@ -31,6 +31,5 @@
       "src/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "src"],
-  "exclude": ["src/test"]
+  "include": ["src/**/*", "src"]
 }
