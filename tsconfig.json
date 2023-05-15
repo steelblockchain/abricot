@@ -31,5 +31,5 @@
       "src/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "src"]
+  "include": ["./index.ts","src/**/*", "src"]
 }
