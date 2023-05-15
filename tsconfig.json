@@ -1,28 +1,35 @@
 {
-    "compilerOptions": {
-      "module": "ES2022",
-      "moduleResolution": "node",
-      "target": "ES2020",
-      "sourceMap": true,
-      "outDir": "dist",
-      /* Interop Constraints */
-      "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */
-      "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
-      /* Type Checking */
-      "strict": true,                                      /* Enable all strict type-checking options. */
-      "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied `any` type.. */
-      "strictNullChecks": true,                         /* When type checking, take into account `null` and `undefined`. */
-      "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
+    /* Language and Environment */
+    "target": "ESNext",                                     /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "module": "ES2022",
+    /* Modules */
+    "rootDir": "./src",                                  /* Specify the root folder within your source files. */
 
-      /* Completeness */
-      "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
-      "resolveJsonModule": true,
-      
-      "baseUrl": "src",
-      "paths": {
-        "src/*": ["src/*"]
-      }
-    },
-    "include": ["src/**/*", "src", "test"],
-  }
+    /* Emit */
+    "declaration": true,                              /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
+    "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
+
+    /* Interop Constraints */
+    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */
+    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+
+    /* Type Checking */
+    "strict": true,                                      /* Enable all strict type-checking options. */
+    "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied `any` type.. */
+    "strictNullChecks": true,                         /* When type checking, take into account `null` and `undefined`. */
+    "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
+
+    /* Completeness */
+    "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "baseUrl": "src",
+    "paths": {
+      "src/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*", "src"]
+}
