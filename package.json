@@ -8,9 +8,9 @@
   "scripts": {
     "clean": "rm -rf dist",
     "lint": "tsc",
-    "build": "tsup src/* --format cjs,esm --dts",
+    "build": "tsc && npm run clean && tsup src/* --format cjs,esm --dts",
     "start": "npm run build && node dist/index",
-    "deploy": "tsc && npm run clean && npm run build && npm publish"
+    "deploy": "npm run build && npm publish"
   },
   "keywords": [
     "abricot",
