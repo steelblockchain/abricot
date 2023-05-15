@@ -22,3 +22,5 @@ jobs:
         uses: changesets/action@v1
         with:
           publish: tsc && npm run clean && npm run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
