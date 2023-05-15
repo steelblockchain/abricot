@@ -31,5 +31,5 @@
       "src/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "src", "test"]
+  "include": ["src/**/*", "src", "test", "*.ts", ".ts", ".tsx", ".d.ts", ".cts", ".d.cts", "*.mts", "*.d.mts"]
 }
