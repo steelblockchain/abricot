@@ -6,7 +6,7 @@
     "target": "ESNext",                                     /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     "module": "ES2022",
     /* Modules */
-    "rootDir": "./src",                                  /* Specify the root folder within your source files. */
+    "rootDir": "./",                                  /* Specify the root folder within your source files. */
 
     /* Emit */
     "declaration": true,                              /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
@@ -31,5 +31,5 @@
       "src/*": ["src/*"]
     }
   },
-  "include": ["./index.ts","src/**/*", "src"]
+  "include": ["./index.ts","src/**/*", "src", "test"]
 }
