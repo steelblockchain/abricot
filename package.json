@@ -10,7 +10,7 @@
     "lint": "tsc",
     "build": "tsup src/**/* --format cjs,esm --dts",
     "start": "npm run build && node dist/index",
-    "deploy": "tsc && npm clean && npm run build && npm publish"
+    "deploy": "tsc && npm run clean && npm run build && npm publish"
   },
   "keywords": [],
   "author": "",
