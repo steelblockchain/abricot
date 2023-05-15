@@ -13,4 +13,7 @@ jobs:
         with: 
           node-version: 16.x
           cache: "npm"
-      - run: tsc && npm run clean && npm run build
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: tsc && npm run clean && npm run build
