@@ -1,24 +1,52 @@
 import BaseModule from "app/module.js";
+import winston from "winston";
 
 export type BaseAppModuleMap<T extends BaseModule> = {
     [key: string]: T;
 };
 
+export type BaseAppOptions = {
+    log_level?: string;
+};
+export type ModuleAnyParameters = Array<any>;
+export type ModuleType<Module extends BaseModule> = {
+    new (...args: ModuleAnyParameters): Module;
+};
+
 export default class BaseApp {
     private readonly modules: BaseAppModuleMap<BaseModule>;
+    private readonly logger: winston.Logger;
 
-    constructor(modules: BaseAppModuleMap<BaseModule> = {}) {
+    constructor(
+        modules: BaseAppModuleMap<BaseModule> = {},
+        options: BaseAppOptions = {}
+    ) {
         this.modules = modules;
+        this.logger = winston.createLogger({
+            level: options.log_level,
+            format: winston.format.simple(),
+            transports: [new winston.transports.Console()],
+        });
+
+        for (let module in this.modules) {
+            this.modules[module].set_logger(this.logger);
+        }
     }
 
-    import_module<T extends BaseModule>(...modules: Array<[string, T]>): void {
-        for (let [key, module] of modules) {
-            if (this.modules[key]) {
-                throw new Error(`key '${key}' is already taken`);
-            }
-
-            this.modules[key] = module;
+    import_module<Module extends BaseModule>(
+        key: string,
+        module: ModuleType<Module>,
+        ...params: ModuleAnyParameters
+    ): Module {
+        if (this.modules[key]) {
+            throw new Error(`key '${key}' is already taken`);
         }
+
+        const module_instance = new module(...params);
+        module_instance.set_logger(this.logger);
+        this.modules[key] = module_instance;
+        this.logger.log("info", `'${key}' module imported`);
+        return module_instance;
     }
 
     dispose_module(...modules: Array<string>): void {
@@ -30,7 +58,7 @@ export default class BaseApp {
         }
     }
 
-    has_module(module: string): boolean {
-        return module in this.modules;
+    has_module(module: string): BaseModule | undefined {
+        return this.modules[module];
     }
 }

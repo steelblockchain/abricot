@@ -99,7 +99,7 @@ export default class Dofus2NetworkProtocol {
         if (field.nullable) {
             if (
                 this.reader.dynamic_reader_call(
-                    field.read_if_null_method ?? "readByte"
+                    field.read_nullable_method ?? "readByte"
                 ) === 0
             ) {
                 return null;

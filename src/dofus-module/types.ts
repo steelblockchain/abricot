@@ -32,7 +32,7 @@ export type Dofus2NetworkProtocolMetadataField = {
 
     read_method?: Dofus2PrimitiveReaderMethod; // if primitive
     read_length_method?: Dofus2PrimitiveReaderMethod; // if array
-    read_if_null_method?: Dofus2PrimitiveReaderMethod; // if nullable
+    read_nullable_method?: Dofus2PrimitiveReaderMethod; // if nullable
     read_type_id_method?: Dofus2PrimitiveReaderMethod; // if fixed type id
 };
 
@@ -41,6 +41,7 @@ export type Dofus2NetworkProtocolMetadata = {
 
     fields: Array<Dofus2NetworkProtocolMetadataField>;
     protocol_name: string;
+    protocol_id: number;
 };
 
 export type Dofus2NetworkProtocolGetter = (
