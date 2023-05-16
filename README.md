@@ -41,12 +41,14 @@ class Test2Module extends TestModule { }
 import { Dofus } from "abricot";
 
 const analyzer = new Dofus.Dofus2PacketAnalyzer();
-const buffer = Buffer.from([1, 2, 3, 4]); // this is just for test
+const buffer = Buffer.from([1, 2, 3, 4, 5, 6]); // this is just for test
 const client_size = false;
-analyzer.analyze(buffer, buffer.length, client_size);
+const packets = analyzer.analyze(buffer, buffer.length, client_size);
+
+const test_packet = packets.shift();
 
 const reader = new Dofus.Dofus2Reader();
-reader.add(buffer, buffer.length);
+reader.add(test_packet.data, test_packet.length);
 
 // this is just for test
 const test_getter = (identifier) => {
