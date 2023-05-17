@@ -17,31 +17,41 @@ export interface Dofus2Packet {
 export type Dofus2NetworkType = "message" | "type";
 export type Dofus2NetworkIdentifier = string | number;
 
+export type Dofus2NetworkProtocolMetadataFieldLimit = {
+    low?: number;
+    up?: number;
+};
+
 export type Dofus2NetworkProtocolMetadataField = {
-    field_name: string;
-
-    boolean_position?: number; // check if is a boolean wrapped value
-    position: number;
-    type: string;
-    is_array: boolean;
-
-    constant_length?: number; // check for constant length
-
-    fixed_type_id?: number;
-    nullable?: boolean;
-
-    read_method?: Dofus2PrimitiveReaderMethod; // if primitive
-    read_length_method?: Dofus2PrimitiveReaderMethod; // if array
-    read_nullable_method?: Dofus2PrimitiveReaderMethod; // if nullable
-    read_type_id_method?: Dofus2PrimitiveReaderMethod; // if fixed type id
+    boolean_byte_wrapper_position?: number;
+    bounds?: Dofus2NetworkProtocolMetadataFieldLimit;
+    constant_length?: number;
+    default_value?: string;
+    is_vector?: boolean;
+    name?: string;
+    namespace?: string;
+    null_checked?: boolean;
+    position?: number;
+    prefixed_by_type_id?: boolean;
+    self_serialize_method?: string;
+    type?: string;
+    type_namespace?: string;
+    use_boolean_byte_wrapper?: boolean;
+    read_false_if_null_method?: Dofus2PrimitiveReaderMethod;
+    read_length_method?: Dofus2PrimitiveReaderMethod;
+    read_method?: Dofus2PrimitiveReaderMethod;
+    read_type_id_method?: Dofus2PrimitiveReaderMethod;
 };
 
 export type Dofus2NetworkProtocolMetadata = {
-    super?: Dofus2NetworkIdentifier;
-
     fields: Array<Dofus2NetworkProtocolMetadataField>;
-    protocol_name: string;
-    protocol_id: number;
+    name: string;
+    namespace: string;
+    protocolID: number;
+    super: string;
+    super_serialize: string;
+    supernamespace: string;
+    use_hash_function: boolean;
 };
 
 export type Dofus2NetworkProtocolGetter = (

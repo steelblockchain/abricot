@@ -88,7 +88,7 @@ export default class Dofus2NetworkProtocol {
     read_element(
         field: Dofus2NetworkProtocolMetadataField
     ): string | number | bigint | boolean | Record<string, any> | null {
-        const metadata = this.get_type(field.type);
+        const metadata = this.get_type(field.type ?? "");
 
         if (!metadata) {
             return this.reader.dynamic_reader_call(
@@ -96,17 +96,17 @@ export default class Dofus2NetworkProtocol {
             );
         }
 
-        if (field.nullable) {
+        if (field.read_false_if_null_method) {
             if (
                 this.reader.dynamic_reader_call(
-                    field.read_nullable_method ?? "readByte"
+                    field.read_false_if_null_method ?? "readByte"
                 ) === 0
             ) {
                 return null;
             }
         }
 
-        if (field.fixed_type_id) {
+        if (field.prefixed_by_type_id) {
             const id = this.reader.dynamic_reader_call(
                 field.read_type_id_method ?? "readByte"
             );
@@ -122,7 +122,7 @@ export default class Dofus2NetworkProtocol {
 
         return new Dofus2NetworkProtocol(
             this.reader,
-            metadata.protocol_name,
+            metadata.name,
             "type",
             this.messages_getter,
             this.types_getter
@@ -148,19 +148,21 @@ export default class Dofus2NetworkProtocol {
 
         const boolean_fields =
             base_data?.fields
-                .filter((field) => field.boolean_position)
+                .filter((field) => field.use_boolean_byte_wrapper)
                 .sort(
                     (f1, f2) =>
-                        (f1.boolean_position ?? 0) - (f2.boolean_position ?? 0)
+                        (f1.boolean_byte_wrapper_position ?? 0) -
+                        (f2.boolean_byte_wrapper_position ?? 0)
                 ) ?? [];
 
         let flag = 0;
         for (let boolean_field of boolean_fields) {
-            const boolean_position = boolean_field.boolean_position ?? 0;
+            const boolean_position =
+                boolean_field.boolean_byte_wrapper_position ?? 0;
             if (boolean_position % 8 === 0) {
                 flag = this.reader.read_uint8();
             }
-            result[boolean_field.field_name] = wrapper_get_flag(
+            result[boolean_field.name ?? ""] = wrapper_get_flag(
                 flag,
                 boolean_position % 8
             );
@@ -168,12 +170,12 @@ export default class Dofus2NetworkProtocol {
 
         const other_fields =
             base_data?.fields
-                .filter((field) => !field.boolean_position)
+                .filter((field) => !field.use_boolean_byte_wrapper)
                 .sort((f1, f2) => (f1.position ?? 0) - (f2.position ?? 0)) ??
             [];
 
         for (let other_field of other_fields) {
-            if (other_field.is_array || other_field.type === "ByteArray") {
+            if (other_field.is_vector || other_field.type === "ByteArray") {
                 const length =
                     other_field.constant_length ??
                     (this.reader.dynamic_reader_call(
@@ -181,18 +183,18 @@ export default class Dofus2NetworkProtocol {
                     ) as number);
 
                 if (other_field.type === "ByteArray") {
-                    result[other_field.field_name] =
+                    result[other_field.name ?? ""] =
                         this.reader.readBytes(length);
                 } else {
-                    result[other_field.field_name] = [];
+                    result[other_field.name ?? ""] = [];
                     for (let _ in Array.from({ length })) {
-                        result[other_field.field_name].push(
+                        result[other_field.name ?? ""].push(
                             this.read_element(other_field)
                         );
                     }
                 }
             } else {
-                result[other_field.field_name] = this.read_element(other_field);
+                result[other_field.name ?? ""] = this.read_element(other_field);
             }
         }
 

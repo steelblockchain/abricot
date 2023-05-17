@@ -16,7 +16,7 @@ To get a local copy up and running follow these simple example steps.
 
 ### Installation
 
-1. Clone the repo
+1. Install the repo
    ```sh
    npm install abricot
    ```
@@ -37,6 +37,9 @@ class Test2Module extends TestModule { }
 
 # Dofus
 
+This project use [Botofu procotol json format](https://gitlab.com/botofu/botofu/-/tree/dev/src/botofu/protocol/parser)
+
+
 ```javascript
 import { Dofus } from "abricot";
 
@@ -51,44 +54,35 @@ const reader = new Dofus.Dofus2Reader();
 reader.add(test_packet.data, test_packet.length);
 
 // this is just for test
-const test_getter = (identifier) => {
-    const all_messages = [
-        { 
-            fields: [
-                {
-                    field_name: "version",
-
-                    position: 0,
-                    boolean_position: undefined, // [REQUIRED FOR SOME TYPE OF FIELD] 
-                    type: "string",
-                    is_array: false,
-                
-                    constant_length: undefined, // [REQUIRED FOR SOME TYPE OF FIELD] 
-                
-                    fixed_type_id: undefined, // [REQUIRED FOR SOME TYPE OF FIELD] 
-                    nullable: undefined, // [REQUIRED FOR SOME TYPE OF FIELD] 
-                
-                    read_method: "readUTF", // [REQUIRED FOR SOME TYPE OF FIELD] 
-                    read_length_method: undefined, // [REQUIRED FOR SOME TYPE OF FIELD] 
-                    read_nullable_method: undefined, // [REQUIRED FOR SOME TYPE OF FIELD] 
-                    read_type_id_method: undefined // [REQUIRED FOR SOME TYPE OF FIELD] 
-                }
-            ],
-            protocol_name: "ProtocolRequired",
-            protocol_id: 1234
-        }
-    ]
-
+const all_messages = []; // you'll need to define how you get all your messages
+const test_message_getter = (identifier) => {
     return all_messages.find(x => {
         if(typeof identifier === "string") {
-            return all_messages.find(x => x.protocol_name === identifier);
+            return all_types.find(x => x.name === identifier);
         } else if(typeof identifier === "number") {
-            return all_messages.find(x => x.protocol_id === identifier)
+            return all_types.find(x => x.protocolID === identifier)
         }
     })
 }
 
-const protocol = new Dofus.Dofus2NetworkProtocol(reader, "ProtocolRequired", "message", test_getter, test_getter);
+const all_types = []; // you'll need to define how you get all your types
+const test_type_getter = (identifier) => {
+    return all_types.find(x => {
+        if(typeof identifier === "string") {
+            return all_types.find(x => x.name === identifier);
+        } else if(typeof identifier === "number") {
+            return all_types.find(x => x.protocolID === identifier)
+        }
+    })
+}
+
+const protocol = new Dofus.Dofus2NetworkProtocol(
+    reader, 
+    "ProtocolRequired", 
+    "message", 
+    test_message_getter, 
+    test_type_getter
+);
 const protocol_data = protocol.decode();
 ```
 
