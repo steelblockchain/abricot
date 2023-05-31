@@ -1,43 +1,39 @@
+import { ErrorMessage } from "frida";
 import Frida from "./frida";
-import { ErrorMessage, Message, SendMessage } from "frida";
 import {
-    ScannerConnectPayload,
-    ScannerMessage,
+    ScannerConnectHandler,
+    ScannerPacketHandler,
     ScannerReceivePayload,
     ScannerSendPayload,
 } from "./types";
-
-export function is_send_message(message: Message): message is SendMessage {
-    return message.type === "send";
-}
-
-export function is_error_message(message: Message): message is ErrorMessage {
-    return message.type === "error";
-}
-
-export function is_connect_payload(
-    message: SendMessage
-): message is ScannerMessage<ScannerConnectPayload> {
-    return message.payload.type === "connect";
-}
-
-export function is_send_payload(
-    message: SendMessage
-): message is ScannerMessage<ScannerSendPayload> {
-    return message.payload.type === "send";
-}
-
-export function is_receive_payload(
-    message: SendMessage
-): message is ScannerMessage<ScannerReceivePayload> {
-    return message.payload.type === "recv";
-}
+import {
+    is_connect_payload,
+    is_error_message,
+    is_receive_payload,
+    is_send_message,
+    is_send_payload,
+} from "./utils";
 
 export default class Scanner {
     private readonly frida: Frida;
 
-    constructor(pid: number) {
+    private readonly on_connect: ScannerConnectHandler;
+    private readonly on_recv: ScannerPacketHandler<ScannerSendPayload>;
+    private readonly on_send: ScannerPacketHandler<ScannerReceivePayload>;
+    private readonly on_error: (err: ErrorMessage) => void;
+
+    constructor(
+        pid: number,
+        on_connect: ScannerConnectHandler,
+        on_recv: ScannerPacketHandler<ScannerSendPayload>,
+        on_send: ScannerPacketHandler<ScannerReceivePayload>,
+        on_error: (err: ErrorMessage) => void
+    ) {
         this.frida = new Frida(pid);
+        this.on_connect = on_connect;
+        this.on_recv = on_recv;
+        this.on_send = on_send;
+        this.on_error = on_error;
     }
 
     async start(): Promise<boolean> {
@@ -48,26 +44,17 @@ export default class Scanner {
             (message, data) => {
                 if (is_send_message(message)) {
                     if (is_connect_payload(message)) {
-                        console.log("connect", message.payload.pid);
+                        this.on_connect(message.payload);
                     }
-                    if (is_send_payload(message)) {
-                        console.log(
-                            "send",
-                            message.payload.pid,
-                            message.payload.target_port,
-                            message.payload.target_ip
-                        );
+                    if (is_send_payload(message) && data) {
+                        this.on_send(message.payload, data);
                     }
-                    if (is_receive_payload(message)) {
-                        console.log(
-                            "recv",
-                            message.payload.pid,
-                            message.payload.target_port,
-                            message.payload.target_ip
-                        );
+                    if (is_receive_payload(message) && data) {
+                        this.on_recv(message.payload, data);
                     }
                 }
                 if (is_error_message(message)) {
+                    this.on_error(message);
                 }
             }
         );

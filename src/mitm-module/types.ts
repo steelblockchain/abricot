@@ -38,3 +38,8 @@ export type ScannerMessage<
 > = Omit<SendMessage, "payload"> & {
     payload: T;
 };
+
+export type ScannerConnectHandler = (payload: ScannerConnectPayload) => void;
+export type ScannerPacketHandler<
+    T extends ScannerSendPayload | ScannerReceivePayload
+> = (payload: T, data: Buffer) => void;
