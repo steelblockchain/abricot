@@ -1,5 +1,6 @@
 import BaseModule from "app/module.js";
 import winston from "winston";
+import { load_config } from "./config";
 
 export type BaseAppModuleMap<T extends BaseModule> = {
     [key: string]: T;
@@ -16,10 +17,12 @@ export type ModuleType<Module extends BaseModule> = {
 export default class BaseApp {
     private readonly modules: BaseAppModuleMap<BaseModule>;
     private readonly logger: winston.Logger;
+    protected readonly config: Record<string, any>;
 
     constructor(
         modules: BaseAppModuleMap<BaseModule> = {},
-        options: BaseAppOptions = {}
+        options: BaseAppOptions = {},
+        config: Record<string, any> | string
     ) {
         this.modules = modules;
         this.logger = winston.createLogger({
@@ -27,6 +30,11 @@ export default class BaseApp {
             format: winston.format.simple(),
             transports: [new winston.transports.Console()],
         });
+        if (typeof config === "string") {
+            this.config = load_config(config);
+        } else {
+            this.config = config;
+        }
 
         for (let module in this.modules) {
             this.modules[module].set_logger(this.logger);
@@ -42,7 +50,7 @@ export default class BaseApp {
             throw new Error(`key '${key}' is already taken`);
         }
 
-        const module_instance = new module(...params);
+        const module_instance = new module(this.config, ...params);
         module_instance.set_logger(this.logger);
         this.modules[key] = module_instance;
         this.logger.log("info", `'${key}' module imported`);

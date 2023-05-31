@@ -1,33 +1,42 @@
 {
-  "name": "abricot",
-  "version": "0.0.5",
-  "description": "abricot is a modulable program. it cannot make crêpes yet but maybe soon.",
-  "main": "dist/index.js",
-  "type": "module",
-  "repository": "https://github.com/steelblockchain/abricot.git",
-  "scripts": {
-    "clean": "rm -rf dist",
-    "lint": "tsc",
-    "build": "tsc && npm run clean && tsup src/* --format cjs,esm --dts",
-    "start": "npm run build && node dist/index",
-    "deploy": "npm run build && npm publish"
-  },
-  "keywords": [
-    "abricot",
-    "crêpes"
-  ],
-  "author": "Mrpotatosse",
-  "license": "ISC",
-  "devDependencies": {
-    "@changesets/cli": "^2.26.1",
-    "@types/node": "^18.11.9",
-    "tsup": "^6.7.0",
-    "typescript": "^5.0.4"
-  },
-  "dependencies": {
-    "fastify": "^4.17.0",
-    "node-cache": "^5.1.2",
-    "typed-emitter": "^2.1.0",
-    "winston": "^3.8.2"
-  }
+    "name": "abricot",
+    "version": "0.0.5",
+    "description": "abricot is a modulable program. it cannot make crêpes yet but maybe soon.",
+    "main": "dist/index.js",
+    "type": "module",
+    "repository": "https://github.com/steelblockchain/abricot.git",
+    "scripts": {
+        "clean": "rm -rf dist",
+        "lint": "tsc",
+        "build": "tsc && npm run clean && tsup src/* --format esm,cjs --dts",
+        "start": "npm run build && node dist/index",
+        "deploy": "npm run build && npm publish"
+    },
+    "keywords": [
+        "abricot",
+        "crêpes"
+    ],
+    "author": "Mrpotatosse",
+    "license": "ISC",
+    "devDependencies": {
+        "@changesets/cli": "^2.26.1",
+        "@types/node": "^18.11.9",
+        "@types/string-template": "^1.0.2",
+        "tsup": "^6.7.0",
+        "typescript": "^5.0.4"
+    },
+    "dependencies": {
+        "@huggingface/inference": "^2.3.3",
+        "@tensorflow/tfjs-node": "^4.6.0",
+        "fastify": "^4.17.0",
+        "frida": "^16.0.19",
+        "gun": "^0.2020.1239",
+        "natural": "^6.3.0",
+        "node-cache": "^5.1.2",
+        "openai": "^3.2.1",
+        "string-template": "^1.0.0",
+        "typed-emitter": "^2.1.0",
+        "winston": "^3.8.2",
+        "yaml": "^2.3.1"
+    }
 }

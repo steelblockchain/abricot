@@ -13,7 +13,10 @@ export default class CustomStream {
 
     add(data: Buffer | null, length: number) {
         if (data !== null) {
-            this.buffer = Buffer.concat([this.buffer, data.slice(0, length)]);
+            this.buffer = Buffer.concat([
+                this.buffer,
+                data.subarray(0, length),
+            ]);
         }
     }
 

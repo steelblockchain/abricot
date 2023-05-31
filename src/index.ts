@@ -12,8 +12,9 @@ import Dofus, {
     Dofus2ReaderMethod,
 } from "dofus-module";
 import { FilterStartWith, FilterNotStartWith } from "types";
+import constants from "constants";
 
-export { App, Stream, Dofus };
+export { App, Stream, Dofus, constants };
 export {
     FilterStartWith,
     FilterNotStartWith,

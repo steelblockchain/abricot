@@ -12,23 +12,50 @@ export type Dofus2PrimitiveReaderMethod = Exclude<
 >;
 
 export default class Dofus2Reader extends ReaderBigEndianStream {
-    readVarInt(): number {
+    read_var(): number | bigint {
+        let result = 0n;
+        let byte_length = 0;
+        for (let i = 0n; i < 64n; i += 7n) {
+            const byte = BigInt(this.read_uint8());
+            result += (byte & 127n) << i;
+            byte_length += 1;
+            if ((byte & 128n) === 0n) {
+                return byte_length <= 4 ? Number(result) : result;
+            }
+        }
+
+        throw new Error("too much data");
+    }
+
+    read_var_short(): number {
         return this.read_var() as number;
+    }
+
+    read_var_int(): number {
+        return this.read_var() as number;
+    }
+
+    read_var_long(): bigint {
+        return this.read_var() as bigint;
+    }
+
+    readVarInt(): number {
+        return this.read_var_int();
     }
     readVarUhInt(): number {
         return this.readVarInt();
     }
     readVarShort(): number {
-        return this.read_var() as number;
+        return this.read_var_short();
     }
     readVarUhShort(): number {
         return this.readVarShort();
     }
     readVarLong(): bigint {
-        return this.read_var() as bigint;
+        return this.read_var_long();
     }
     readVarUhLong(): bigint {
-        return this.read_var() as bigint;
+        return this.readVarLong();
     }
     readBytes(length: number): Buffer {
         return this.read_bytes(length);
@@ -64,8 +91,8 @@ export default class Dofus2Reader extends ReaderBigEndianStream {
         return this.read_string();
     }
     dynamic_reader_call(
-        func_name: Exclude<Dofus2ReaderMethod, "readBytes">
-    ): string | number | bigint | boolean | Buffer {
+        func_name: Dofus2PrimitiveReaderMethod
+    ): string | number | bigint | boolean {
         const result = this[func_name]();
         return result;
     }

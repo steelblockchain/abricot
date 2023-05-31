@@ -1,4 +1,6 @@
+bin/
 dist/
 node_modules/
 tests/
 package-lock.json
+radata/

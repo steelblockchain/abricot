@@ -1,29 +1,29 @@
-## Abricot
+# Abricot
 
 Yes
 
-## Getting Started
+# Getting Started
 
 This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
 
-### Prerequisites
+## Prerequisites
 
 * npm
   ```sh
   npm install npm@latest -g
   ```
 
-### Installation
+## Installation
 
-1. Install the repo
+1. install abricot
    ```sh
    npm install abricot
    ```
 
 ## Usage
 
-# App
+### App
 
 ```javascript
 import { App } from "abricot";
@@ -35,7 +35,7 @@ class TestModule extends App.BaseModule { }
 class Test2Module extends TestModule { }
 ```
 
-# Dofus
+### Dofus
 
 This project use [Botofu procotol json format](https://gitlab.com/botofu/botofu/-/tree/dev/src/botofu/protocol/parser)
 
@@ -86,7 +86,7 @@ const protocol = new Dofus.Dofus2NetworkProtocol(
 const protocol_data = protocol.decode();
 ```
 
-## Roadmap
+# Roadmap
 
 - [x] Add Changelog
 - [ ] Add Additional Templates w/ Examples
