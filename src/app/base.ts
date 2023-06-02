@@ -22,7 +22,7 @@ export default class BaseApp {
     constructor(
         modules: BaseAppModuleMap<BaseModule> = {},
         options: BaseAppOptions = {},
-        config: Record<string, any> | string
+        config: Record<string, any> | string = {}
     ) {
         this.modules = modules;
         this.logger = winston.createLogger({

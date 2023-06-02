@@ -6,32 +6,29 @@ export type BufferReadMethods = FilterStartWith<keyof Buffer, "read">;
 class ReaderStream extends CustomStream {
     dynamic_buffer_call(
         func_name: BufferReadMethods,
-        offset: number,
         byteLength: number
     ): number | bigint {
-        const result = this.buffer[func_name](offset, byteLength);
+        const result = this.buffer[func_name](this.offset, byteLength);
         this.offset += byteLength;
         return result;
     }
 
     read_int8(): number {
-        return this.dynamic_buffer_call("readInt8", this.offset, 1) as number;
+        return this.dynamic_buffer_call("readInt8", 1) as number;
     }
     read_uint8(): number {
-        return this.dynamic_buffer_call("readUInt8", this.offset, 1) as number;
+        return this.dynamic_buffer_call("readUInt8", 1) as number;
     }
 
     read_int16(): number {
         return this.dynamic_buffer_call(
             this.endian === "big" ? "readInt16BE" : "readInt16LE",
-            this.offset,
             2
         ) as number;
     }
     read_uint16(): number {
         return this.dynamic_buffer_call(
             this.endian === "big" ? "readUInt16BE" : "readUInt16LE",
-            this.offset,
             2
         ) as number;
     }
@@ -39,14 +36,12 @@ class ReaderStream extends CustomStream {
     read_int32(): number {
         return this.dynamic_buffer_call(
             this.endian === "big" ? "readInt32BE" : "readInt32LE",
-            this.offset,
             4
         ) as number;
     }
     read_uint32(): number {
         return this.dynamic_buffer_call(
             this.endian === "big" ? "readUInt32BE" : "readUInt32LE",
-            this.offset,
             4
         ) as number;
     }
@@ -54,14 +49,12 @@ class ReaderStream extends CustomStream {
     read_int64(): bigint {
         return this.dynamic_buffer_call(
             this.endian === "big" ? "readBigInt64BE" : "readBigInt64LE",
-            this.offset,
             8
         ) as bigint;
     }
     read_uint64(): bigint {
         return this.dynamic_buffer_call(
             this.endian === "big" ? "readBigUInt64BE" : "readBigUInt64LE",
-            this.offset,
             8
         ) as bigint;
     }
@@ -69,7 +62,6 @@ class ReaderStream extends CustomStream {
     read_double(): number {
         return this.dynamic_buffer_call(
             this.endian === "big" ? "readDoubleBE" : "readDoubleLE",
-            this.offset,
             8
         ) as number;
     }
@@ -77,7 +69,6 @@ class ReaderStream extends CustomStream {
     read_float(): number {
         return this.dynamic_buffer_call(
             this.endian === "big" ? "readFloatBE" : "readFloatLE",
-            this.offset,
             4
         ) as number;
     }

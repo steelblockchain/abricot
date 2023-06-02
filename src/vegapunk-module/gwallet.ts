@@ -29,7 +29,7 @@ export default class GWallet {
                 alias,
                 timestamp: now,
                 random,
-            })) ?? `random-${random}-${random * (Math.random() + 1)}`
+            })) ?? `- invalid work -`
         );
     }
 

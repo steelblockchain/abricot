@@ -13,6 +13,8 @@ export type ScannerPayload = {
 };
 
 export type ScannerConnectPayload = {
+    host_ip: string;
+    host_port: number;
     target_ip: string;
     target_port: number;
 } & ScannerPayload;

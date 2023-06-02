@@ -11,32 +11,150 @@ export type Dofus2PrimitiveReaderMethod = Exclude<
     "readBytes"
 >;
 
-export default class Dofus2Reader extends ReaderBigEndianStream {
-    read_var(): number | bigint {
-        let result = 0n;
-        let byte_length = 0;
-        for (let i = 0n; i < 64n; i += 7n) {
-            const byte = BigInt(this.read_uint8());
-            result += (byte & 127n) << i;
-            byte_length += 1;
-            if ((byte & 128n) === 0n) {
-                return byte_length <= 4 ? Number(result) : result;
-            }
-        }
+export type Number64 = {
+    low: number;
+    high: number;
+};
 
-        throw new Error("too much data");
-    }
+export const number64_to_number = (num64: Number64): number => {
+    return num64.high * 4294967296 + num64.low;
+};
+
+export default class Dofus2Reader extends ReaderBigEndianStream {
+    static readonly MASK_10000000: number = 128;
+    static readonly MASK_01111111: number = 127;
+
+    static readonly CHUNCK_BIT_SIZE: number = 7;
+
+    static readonly SHORT_SIZE: number = 16;
+    static readonly INT_SIZE: number = 32;
+
+    static readonly SHORT_MAX_VALUE: number = 32767;
+    static readonly UNSIGNED_SHORT_MAX_VALUE: number = 65536;
 
     read_var_short(): number {
-        return this.read_var() as number;
+        let b: number = 0;
+        let value: number = 0;
+        let offset: number = 0;
+        let hasNext: boolean = false;
+        while (offset < Dofus2Reader.SHORT_SIZE) {
+            b = this.readByte();
+            hasNext =
+                (b & Dofus2Reader.MASK_10000000) === Dofus2Reader.MASK_10000000;
+            if (offset > 0) {
+                value += (b & Dofus2Reader.MASK_01111111) << offset;
+            } else {
+                value += b & Dofus2Reader.MASK_01111111;
+            }
+            offset += Dofus2Reader.CHUNCK_BIT_SIZE;
+            if (!hasNext) {
+                if (value > Dofus2Reader.SHORT_MAX_VALUE) {
+                    value -= Dofus2Reader.UNSIGNED_SHORT_MAX_VALUE;
+                }
+                return value;
+            }
+        }
+        throw new Error("Too much data");
     }
 
     read_var_int(): number {
-        return this.read_var() as number;
+        let b: number = 0;
+        let value: number = 0;
+        let offset: number = 0;
+        let hasNext: boolean = false;
+        while (offset < Dofus2Reader.INT_SIZE) {
+            b = this.readByte();
+            hasNext =
+                (b & Dofus2Reader.MASK_10000000) === Dofus2Reader.MASK_10000000;
+            if (offset > 0) {
+                value += (b & Dofus2Reader.MASK_01111111) << offset;
+            } else {
+                value += b & Dofus2Reader.MASK_01111111;
+            }
+            offset += Dofus2Reader.CHUNCK_BIT_SIZE;
+            if (!hasNext) {
+                return value;
+            }
+        }
+        throw new Error("Too much data");
     }
 
-    read_var_long(): bigint {
-        return this.read_var() as bigint;
+    read_var_long(): number {
+        var b: number = 0;
+        var result: Number64 = { high: 0, low: 0 };
+        var i: number = 0;
+        while (true) {
+            b = this.readUnsignedByte();
+            if (i == 28) {
+                break;
+            }
+            if (b < 128) {
+                result.low |= b << i;
+                return number64_to_number(result);
+            }
+            result.low |= (b & 127) << i;
+            i += 7;
+        }
+        if (b >= 128) {
+            b &= 127;
+            result.low |= b << i;
+            result.high = b >>> 4;
+            i = 3;
+            while (true) {
+                b = this.readUnsignedByte();
+                if (i < 32) {
+                    if (b < 128) {
+                        break;
+                    }
+                    result.high |= (b & 127) << i;
+                }
+                i += 7;
+            }
+            result.high |= b << i;
+            return number64_to_number(result);
+        }
+        result.low |= b << i;
+        result.high = b >>> 4;
+        return number64_to_number(result);
+    }
+
+    read_var_ulong(): number {
+        let b: number = 0;
+        let result: Number64 = { high: 0, low: 0 };
+        let i: number = 0;
+        while (true) {
+            b = this.readUnsignedByte();
+            if (i == 28) {
+                break;
+            }
+            if (b < 128) {
+                result.low |= b << i;
+                return number64_to_number(result);
+            }
+            result.low |= (b & 127) << i;
+            i += 7;
+        }
+        if (b >= 128) {
+            b &= 127;
+            result.low |= b << i;
+            result.high = b >>> 4;
+            i = 3;
+            while (true) {
+                b = this.readUnsignedByte();
+                if (i < 32) {
+                    if (b < 128) {
+                        break;
+                    }
+                    result.high |= (b & 127) << i;
+                }
+                i += 7;
+            }
+            result.high |= b << i;
+            return number64_to_number(result);
+        }
+        result.low |= b << i;
+        result.high = b >>> 4;
+        return number64_to_number(result);
     }
 
     readVarInt(): number {
@@ -51,11 +169,11 @@ export default class Dofus2Reader extends ReaderBigEndianStream {
     readVarUhShort(): number {
         return this.readVarShort();
     }
-    readVarLong(): bigint {
+    readVarLong(): number {
         return this.read_var_long();
     }
-    readVarUhLong(): bigint {
-        return this.readVarLong();
+    readVarUhLong(): number {
+        return this.read_var_ulong();
     }
     readBytes(length: number): Buffer {
         return this.read_bytes(length);
@@ -82,17 +200,17 @@ export default class Dofus2Reader extends ReaderBigEndianStream {
         return this.read_uint32();
     }
     readFloat(): number {
-        return this.read_float();
+        return Number(this.read_float().toFixed(4));
     }
     readDouble(): number {
-        return this.read_double();
+        return Number(this.read_double().toFixed(8));
     }
     readUTF(): string {
         return this.read_string();
     }
     dynamic_reader_call(
         func_name: Dofus2PrimitiveReaderMethod
-    ): string | number | bigint | boolean {
+    ): string | number | boolean {
         const result = this[func_name]();
         return result;
     }

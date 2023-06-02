@@ -18,21 +18,21 @@ export default class Dofus2PacketAnalyzer {
                 break;
             }
 
-            const initial_offset = this.reader.offset;
+            //const initial_offset = this.reader.offset;
             const header = this.reader.read_uint16();
 
             const static_header = header & 3;
             const message_id = header >> 2;
 
             if (client_side && this.reader.remnant_size() < 4) {
-                this.reader.set_offset(initial_offset);
+                this.reader.set_offset(0);
                 break;
             }
 
             const instance_id = client_side ? this.reader.read_uint32() : 0;
 
             if (this.reader.remnant_size() < static_header) {
-                this.reader.set_offset(initial_offset);
+                this.reader.set_offset(0);
                 break;
             }
 
@@ -42,7 +42,7 @@ export default class Dofus2PacketAnalyzer {
             }
 
             if (this.reader.remnant_size() < length) {
-                this.reader.set_offset(initial_offset);
+                this.reader.set_offset(0);
                 break;
             }
 
@@ -57,6 +57,7 @@ export default class Dofus2PacketAnalyzer {
                 side: client_side ? "client" : "server",
                 timestamp: new Date(),
             });
+            this.reader.remove_before_offset();
         }
 
         this.reader.remove_before_offset();

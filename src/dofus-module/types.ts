@@ -1,4 +1,4 @@
-import { Dofus2PrimitiveReaderMethod, Dofus2ReaderMethod } from "./reader";
+import { Dofus2PrimitiveWriterMethod } from "./writer";
 
 export type Dofus2PacketSide = "client" | "server";
 
@@ -37,10 +37,10 @@ export type Dofus2NetworkProtocolMetadataField = {
     type?: string;
     type_namespace?: string;
     use_boolean_byte_wrapper?: boolean;
-    read_false_if_null_method?: Dofus2PrimitiveReaderMethod;
-    read_length_method?: Dofus2PrimitiveReaderMethod;
-    read_method?: Dofus2PrimitiveReaderMethod;
-    read_type_id_method?: Dofus2PrimitiveReaderMethod;
+    write_false_if_null_method?: Dofus2PrimitiveWriterMethod;
+    write_length_method?: Dofus2PrimitiveWriterMethod;
+    write_method?: Dofus2PrimitiveWriterMethod;
+    write_type_id_method?: Dofus2PrimitiveWriterMethod;
 };
 
 export type Dofus2NetworkProtocolMetadata = {
@@ -57,3 +57,8 @@ export type Dofus2NetworkProtocolMetadata = {
 export type Dofus2NetworkProtocolGetter = (
     identifier: Dofus2NetworkIdentifier
 ) => Dofus2NetworkProtocolMetadata | undefined;
+
+export type Dofus2NetworkData = {
+    __name__: string;
+    __id__: number;
+} & Record<string, any>;

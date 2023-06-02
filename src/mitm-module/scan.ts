@@ -18,10 +18,13 @@ Interceptor.attach(connect_p, {
         }
     },
     onLeave: function (retval) {
+        const host_address = Socket.localAddress(this.connect_sockfd);
         const message = {
             type: "connect",
             pid: Process.id,
             fd: this.connect_sockfd,
+            host_ip: host_address.ip,
+            host_port: host_address.port,
             target_ip: this.addr,
             target_port: this.port,
         };
@@ -37,6 +40,9 @@ Interceptor.attach(send_p, {
         this.send_len = args[2].toInt32();
     },
     onLeave: function (retval) {
+        if (retval.toInt32() < 0) {
+            return;
+        }
         const socket_type = Socket.type(this.send_sockfd);
         const buffer = ptr(this.send_buf);
 
@@ -66,6 +72,9 @@ Interceptor.attach(recv_p, {
         this.recv_buf = args[1];
     },
     onLeave: function (retval) {
+        if (retval.toInt32() <= 0) {
+            return;
+        }
         const socket_type = Socket.type(this.recv_sockfd);
         const buffer = ptr(this.recv_buf);
         const length = retval.toInt32();

@@ -8,7 +8,7 @@
     "scripts": {
         "clean": "rm -rf dist",
         "lint": "tsc",
-        "build": "tsc && npm run clean && tsup src/**/* --format esm --dts",
+        "build": "tsc && npm run clean && tsup src/**/*.ts --format esm --dts",
         "start": "npm run build && node dist/index",
         "deploy": "npm run build && npm publish"
     },
@@ -31,6 +31,7 @@
         "fastify": "^4.17.0",
         "frida": "^16.0.19",
         "gun": "^0.2020.1239",
+        "jsonpath-plus": "^7.2.0",
         "natural": "^6.3.0",
         "node-cache": "^5.1.2",
         "openai": "^3.2.1",

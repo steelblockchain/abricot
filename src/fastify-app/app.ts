@@ -8,7 +8,7 @@ export default class FastifyApp extends BaseApp {
     constructor(
         modules: BaseAppModuleMap<BaseModule> = {},
         options: BaseAppOptions = {},
-        config: Record<string, any>
+        config: Record<string, any> | string = {}
     ) {
         super(modules, options, config);
 
