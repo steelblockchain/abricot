@@ -6,10 +6,11 @@ export type BufferWriteMethods = FilterStartWith<keyof Buffer, "write">;
 class WriterStream extends CustomStream {
     dynamic_buffer_call(
         func_name: Exclude<BufferWriteMethods, "write">,
-        value: number | bigint,
+        value: number,
         offset: number,
         byteLength: number
     ): void {
+        this.add(Buffer.alloc(byteLength), byteLength);
         (
             this.buffer[func_name] as (
                 value: number | bigint,
@@ -60,7 +61,7 @@ class WriterStream extends CustomStream {
             4
         );
     }
-    write_int64(value: bigint) {
+    write_int64(value: number) {
         this.dynamic_buffer_call(
             this.endian === "big" ? "writeBigInt64BE" : "writeBigInt64LE",
             value,
@@ -68,7 +69,7 @@ class WriterStream extends CustomStream {
             8
         );
     }
-    write_uint64(value: bigint) {
+    write_uint64(value: number) {
         this.dynamic_buffer_call(
             this.endian === "big" ? "writeBigUInt64BE" : "writeBigUInt64LE",
             value,
@@ -93,7 +94,7 @@ class WriterStream extends CustomStream {
         );
     }
     write_bytes(value: Buffer) {
-        this.add(this.buffer, value.length);
+        this.add(value, value.length);
         this.offset += value.length;
     }
     write_string(value: string) {

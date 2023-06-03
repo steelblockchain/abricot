@@ -1,9 +1,9 @@
 export type StreamEndian = "big" | "little";
 
 export default class CustomStream {
-    buffer: Buffer;
-    endian: StreamEndian;
-    offset: number;
+    public readonly endian: StreamEndian;
+    protected buffer: Buffer;
+    protected offset: number;
 
     constructor(endian: StreamEndian) {
         this.buffer = Buffer.alloc(0);

@@ -1,5 +1,14 @@
 import { ReaderBigEndianStream } from "io/reader";
 import { FilterNotStartWith, FilterStartWith } from "types";
+import {
+    MASK_01111111,
+    MASK_10000000,
+    SHORT_SIZE,
+    INT_SIZE,
+    SHORT_MAX_VALUE,
+    UNSIGNED_SHORT_MAX_VALUE,
+    CHUNCK_BIT_SIZE,
+} from "./constants";
 
 export type Dofus2ReaderMethod = FilterNotStartWith<
     FilterStartWith<keyof Dofus2Reader, "read">,
@@ -21,35 +30,23 @@ export const number64_to_number = (num64: Number64): number => {
 };
 
 export default class Dofus2Reader extends ReaderBigEndianStream {
-    static readonly MASK_10000000: number = 128;
-    static readonly MASK_01111111: number = 127;
-
-    static readonly CHUNCK_BIT_SIZE: number = 7;
-
-    static readonly SHORT_SIZE: number = 16;
-    static readonly INT_SIZE: number = 32;
-
-    static readonly SHORT_MAX_VALUE: number = 32767;
-    static readonly UNSIGNED_SHORT_MAX_VALUE: number = 65536;
-
     read_var_short(): number {
         let b: number = 0;
         let value: number = 0;
         let offset: number = 0;
         let hasNext: boolean = false;
-        while (offset < Dofus2Reader.SHORT_SIZE) {
+        while (offset < SHORT_SIZE) {
             b = this.readByte();
-            hasNext =
-                (b & Dofus2Reader.MASK_10000000) === Dofus2Reader.MASK_10000000;
+            hasNext = (b & MASK_10000000) === MASK_10000000;
             if (offset > 0) {
-                value += (b & Dofus2Reader.MASK_01111111) << offset;
+                value += (b & MASK_01111111) << offset;
             } else {
-                value += b & Dofus2Reader.MASK_01111111;
+                value += b & MASK_01111111;
             }
-            offset += Dofus2Reader.CHUNCK_BIT_SIZE;
+            offset += CHUNCK_BIT_SIZE;
             if (!hasNext) {
-                if (value > Dofus2Reader.SHORT_MAX_VALUE) {
-                    value -= Dofus2Reader.UNSIGNED_SHORT_MAX_VALUE;
+                if (value > SHORT_MAX_VALUE) {
+                    value -= UNSIGNED_SHORT_MAX_VALUE;
                 }
                 return value;
             }
@@ -62,16 +59,16 @@ export default class Dofus2Reader extends ReaderBigEndianStream {
         let value: number = 0;
         let offset: number = 0;
         let hasNext: boolean = false;
-        while (offset < Dofus2Reader.INT_SIZE) {
+        while (offset < INT_SIZE) {
             b = this.readByte();
             hasNext =
-                (b & Dofus2Reader.MASK_10000000) === Dofus2Reader.MASK_10000000;
+                (b & MASK_10000000) === MASK_10000000;
             if (offset > 0) {
-                value += (b & Dofus2Reader.MASK_01111111) << offset;
+                value += (b & MASK_01111111) << offset;
             } else {
-                value += b & Dofus2Reader.MASK_01111111;
+                value += b & MASK_01111111;
             }
-            offset += Dofus2Reader.CHUNCK_BIT_SIZE;
+            offset += CHUNCK_BIT_SIZE;
             if (!hasNext) {
                 return value;
             }

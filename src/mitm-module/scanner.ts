@@ -41,7 +41,7 @@ export default class Scanner {
             "scan",
             undefined,
             undefined,
-            (message, data) => {
+            (script, message, data) => {
                 if (is_send_message(message)) {
                     if (is_connect_payload(message)) {
                         this.on_connect(message.payload);

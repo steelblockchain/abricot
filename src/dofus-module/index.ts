@@ -1,4 +1,4 @@
-import Dofus2PacketAnalyzer from "dofus-module/packet";
+import Dofus2PacketAnalyzer from "./packet_reader";
 import {
     Dofus2PacketSide,
     Dofus2NetworkType,
@@ -8,7 +8,9 @@ import {
     Dofus2NetworkProtocolMetadataField,
     Dofus2Packet,
 } from "dofus-module/types";
-import Dofus2NetworkProtocol, { wrapper_get_flag } from "dofus-module/protocol";
+import Dofus2NetworkProtocol from "./protocol";
+import { wrapper_get_flag } from "./protocol_reader";
+import { wrapper_set_flag } from "./protocol_writer";
 import Dofus2Reader, {
     Dofus2PrimitiveReaderMethod,
     Dofus2ReaderMethod,
@@ -34,4 +36,5 @@ export default {
     Dofus2Reader,
     // function
     wrapper_get_flag,
+    wrapper_set_flag,
 };

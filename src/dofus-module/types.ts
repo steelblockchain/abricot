@@ -2,7 +2,7 @@ import { Dofus2PrimitiveWriterMethod } from "./writer";
 
 export type Dofus2PacketSide = "client" | "server";
 
-export interface Dofus2Packet {
+export type Dofus2Packet = {
     header: number;
     id: number;
 
@@ -12,7 +12,7 @@ export interface Dofus2Packet {
 
     side: Dofus2PacketSide;
     timestamp: Date;
-}
+};
 
 export type Dofus2NetworkType = "message" | "type";
 export type Dofus2NetworkIdentifier = string | number;

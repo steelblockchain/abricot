@@ -1,13 +1,13 @@
 // @ts-nocheck
-var connect_p = Module.getExportByName(null, "connect");
-var send_p = Module.getExportByName(null, "send");
-var recv_p = Module.getExportByName(null, "recv");
+const connect_p = Module.getExportByName(null, "connect");
+const send_p = Module.getExportByName(null, "send");
+const recv_p = Module.getExportByName(null, "recv");
 
 Interceptor.attach(connect_p, {
     onEnter: function (args) {
         this.connect_sockfd = args[0].toInt32();
 
-        var sockaddr_p = args[1];
+        const sockaddr_p = args[1];
         this.sa_family = sockaddr_p.add(1).readU8();
         this.port =
             256 * sockaddr_p.add(2).readU8() + sockaddr_p.add(3).readU8();

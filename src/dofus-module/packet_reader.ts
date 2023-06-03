@@ -1,9 +1,8 @@
-import { ReaderBigEndianStream } from "io/reader";
 import { Dofus2Packet } from "./types";
+import Dofus2Reader from "./reader";
 
-export default class Dofus2PacketAnalyzer {
-    private readonly reader: ReaderBigEndianStream =
-        new ReaderBigEndianStream();
+export default class Dofus2PacketReader {
+    private readonly reader: Dofus2Reader = new Dofus2Reader();
 
     analyze(
         buffer: Buffer,
@@ -18,7 +17,6 @@ export default class Dofus2PacketAnalyzer {
                 break;
             }
 
-            //const initial_offset = this.reader.offset;
             const header = this.reader.read_uint16();
 
             const static_header = header & 3;

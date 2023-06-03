@@ -39,52 +39,8 @@ class Test2Module extends TestModule { }
 
 This project use [Botofu procotol json format](https://gitlab.com/botofu/botofu/-/tree/dev/src/botofu/protocol/parser)
 
-
-```javascript
-import { Dofus } from "abricot";
-
-const analyzer = new Dofus.Dofus2PacketAnalyzer();
-const buffer = Buffer.from([1, 2, 3, 4, 5, 6]); // this is just for test
-const client_size = false;
-const packets = analyzer.analyze(buffer, buffer.length, client_size);
-
-const test_packet = packets.shift();
-
-const reader = new Dofus.Dofus2Reader();
-reader.add(test_packet.data, test_packet.length);
-
-// this is just for test
-const all_messages = []; // you'll need to define how you get all your messages
-const test_message_getter = (identifier) => {
-    return all_messages.find(x => {
-        if(typeof identifier === "string") {
-            return all_types.find(x => x.name === identifier);
-        } else if(typeof identifier === "number") {
-            return all_types.find(x => x.protocolID === identifier)
-        }
-    })
-}
-
-const all_types = []; // you'll need to define how you get all your types
-const test_type_getter = (identifier) => {
-    return all_types.find(x => {
-        if(typeof identifier === "string") {
-            return all_types.find(x => x.name === identifier);
-        } else if(typeof identifier === "number") {
-            return all_types.find(x => x.protocolID === identifier)
-        }
-    })
-}
-
-const protocol = new Dofus.Dofus2NetworkProtocol(
-    reader, 
-    "ProtocolRequired", 
-    "message", 
-    test_message_getter, 
-    test_type_getter
-);
-const protocol_data = protocol.decode();
-```
+[MITM example](https://github.com/steelblockchain/abricot/blob/main/scripts/mitm.js)
+[interact example](https://github.com/steelblockchain/abricot/blob/main/scripts/interact.js)
 
 # Roadmap
 

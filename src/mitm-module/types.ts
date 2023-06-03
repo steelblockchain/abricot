@@ -2,6 +2,7 @@ import { SendMessage } from "frida";
 
 export type SCRIPTS_TYPE = {
     scan: string;
+    funcs: string;
 };
 
 export type ScannerType = "connect" | "send" | "recv";

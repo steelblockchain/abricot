@@ -1,6 +1,12 @@
-import { Script, ScriptMessageHandler, Session, attach } from "frida";
+import { Message, Script, Session, attach } from "frida";
 import { SCRIPTS } from "./scripts";
 import { SCRIPTS_TYPE } from "./types";
+
+export type FridaScriptMessageHandler = (
+    script: Script,
+    message: Message,
+    data?: Buffer | null
+) => void;
 
 export default class Frida {
     protected readonly pid: number;
@@ -16,7 +22,7 @@ export default class Frida {
         name: keyof SCRIPTS_TYPE,
         message?: Record<string, any>,
         data?: Buffer,
-        callback?: ScriptMessageHandler
+        callback?: FridaScriptMessageHandler
     ): Promise<boolean> {
         return await this.load_script(
             name,
@@ -32,7 +38,7 @@ export default class Frida {
         script: string,
         message?: Record<string, any>,
         data?: Buffer,
-        callback?: ScriptMessageHandler
+        callback?: FridaScriptMessageHandler
     ): Promise<boolean> {
         if (this.scripts[name]) {
             return false;
@@ -42,27 +48,34 @@ export default class Frida {
             this.session = await attach(this.pid);
         }
 
-        this.scripts[name] = await this.session.createScript(script);
+        const session_script = await this.session.createScript(script);
 
         if (callback) {
-            this.scripts[name].message.connect(callback);
+            session_script.message.connect((message, data) => {
+                callback(session_script, message, data);
+            });
         }
 
-        await this.scripts[name].load();
+        await session_script.load();
 
-        if (message) {
-            this.scripts[name].post(message, data);
+        if (message || data) {
+            session_script.post(message, data);
         }
 
+        this.scripts[name] = session_script;
         return true;
     }
 
-    unload_script(name: string): boolean {
+    unload_script(name: keyof typeof this.scripts): boolean {
         if (!this.scripts[name]) {
             return false;
         }
 
         this.scripts[name].unload();
         return true;
+    }
+
+    get_script(name: keyof typeof this.scripts): Script {
+        return this.scripts[name];
     }
 }

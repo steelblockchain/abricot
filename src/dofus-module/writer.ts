@@ -1,5 +1,6 @@
 import { WriterBigEndianStream } from "io/writer";
 import { FilterStartWith, FilterNotStartWith } from "types";
+import { MASK_01111111, MASK_10000000, CHUNCK_BIT_SIZE } from "./constants";
 
 export type Dofus2WriterMethod = FilterNotStartWith<
     FilterStartWith<keyof Dofus2Writer, "write">,
@@ -12,45 +13,46 @@ export type Dofus2PrimitiveWriterMethod = Exclude<
 >;
 
 export default class Dofus2Writer extends WriterBigEndianStream {
-    write_var(value: bigint) {
-        let has_next = false;
+    write_var(value: number) {
+        let has_next: boolean = false;
 
         do {
-            let byte = value & 0x7fn;
-            value = value >> 7n;
+            let byte: number = value & MASK_01111111;
+            value = value >>> CHUNCK_BIT_SIZE;
             has_next = value > 0;
 
             if (has_next) {
-                byte = byte | 0x80n;
+                byte |= MASK_10000000;
             }
-            this.writeByte(Number(byte));
+
+            this.writeByte(byte);
         } while (has_next);
     }
     write_var_short(value: number) {
-        this.write_var(BigInt(value));
+        this.write_var(value);
     }
     write_var_int(value: number) {
-        this.write_var(BigInt(value));
+        this.write_var(value);
     }
-    write_var_long(value: bigint) {
+    write_var_long(value: number) {
         this.write_var(value);
     }
     writeVarInt(value: number) {
-        this.write_var(BigInt(value));
+        this.write_var(value);
     }
     writeVarUhInt(value: number) {
         this.writeVarInt(value);
     }
     writeVarShort(value: number) {
-        this.write_var(BigInt(value));
+        this.write_var(value);
     }
     writeVarUhShort(value: number) {
         this.writeVarShort(value);
     }
-    writeVarLong(value: bigint) {
+    writeVarLong(value: number) {
         this.write_var(value);
     }
-    writeVarUhLong(value: bigint) {
+    writeVarUhLong(value: number) {
         this.writeVarLong(value);
     }
     writeBytes(value: Buffer) {
@@ -89,12 +91,8 @@ export default class Dofus2Writer extends WriterBigEndianStream {
 
     dynamic_writer_call(
         func_name: Dofus2PrimitiveWriterMethod,
-        value: bigint | number | string | boolean
+        value: number | string | boolean
     ) {
-        (
-            this[func_name] as (
-                value: number | bigint | string | boolean
-            ) => void
-        )(value);
+        (this[func_name] as (value: number | string | boolean) => void)(value);
     }
 }
