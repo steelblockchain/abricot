@@ -1,3 +1,9 @@
+/**
+ * to start:
+ *
+ * node mitm.js <PID> <DOFUS_INVOKER_PATH>
+ *
+ */
 import Scanner from "../dist/mitm-module/scanner.js";
 import Dofus2PacketReader from "../dist/dofus-module/packet_reader.js";
 import Dofus2Reader from "../dist/dofus-module/reader.js";

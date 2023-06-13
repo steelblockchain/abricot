@@ -1,3 +1,9 @@
+/**
+ * to start:
+ *
+ * node interact.js <PID>
+ *
+ */
 import { join } from "path";
 import { readFileSync } from "fs";
 import readline from "readline";

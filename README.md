@@ -23,29 +23,18 @@ To get a local copy up and running follow these simple example steps.
 
 ## Usage
 
-### App
-
-```javascript
-import { App } from "abricot";
-
-class TestApp extends App.BaseApp {}
-
-class TestModule extends App.BaseModule { }
-
-class Test2Module extends TestModule { }
-```
-
 ### Dofus
 
 This project use [Botofu procotol json format](https://gitlab.com/botofu/botofu/-/tree/dev/src/botofu/protocol/parser)
 
-[MITM example](https://github.com/steelblockchain/abricot/blob/main/scripts/mitm.js)
+[MITM example](https://github.com/steelblockchain/abricot/blob/main/scripts/mitm.js) 
+
 [interact example](https://github.com/steelblockchain/abricot/blob/main/scripts/interact.js)
 
 # Roadmap
 
 - [x] Add Changelog
-- [ ] Add Additional Templates w/ Examples
+- [ ] Finish AI
 - [ ] Multi-language Support
     - [ ] Chinese
 
