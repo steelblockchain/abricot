@@ -1,5 +1,11 @@
 # abricot
 
+## 0.0.6
+
+### Patch Changes
+
+- 2c850c8: fix dofus - add message writer + message sender
+
 ## 0.0.5
 
 ### Patch Changes
