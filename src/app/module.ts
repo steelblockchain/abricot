@@ -9,7 +9,7 @@ export default abstract class BaseModule<
 })<T> {
     private static readonly __default_logger__: winston.Logger =
         winston.createLogger();
-    private logger?: winston.Logger;
+    protected logger?: winston.Logger;
 
     set_logger(logger: winston.Logger) {
         this.logger = logger;
