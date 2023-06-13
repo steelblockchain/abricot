@@ -20,6 +20,7 @@ import Dofus2Writer, {
     Dofus2PrimitiveWriterMethod,
     Dofus2WriterMethod,
 } from "./writer";
+import { AStar } from "./astar";
 
 export {
     // types/interfaces
@@ -43,6 +44,7 @@ export default {
     Dofus2NetworkProtocol,
     Dofus2Reader,
     Dofus2Writer,
+    AStar,
     // function
     wrapper_get_flag,
     wrapper_set_flag,
