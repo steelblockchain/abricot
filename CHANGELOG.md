@@ -1,5 +1,11 @@
 # abricot
 
+## 0.0.7
+
+### Patch Changes
+
+- 514ba3e: add in main index
+
 ## 0.0.6
 
 ### Patch Changes
