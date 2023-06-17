@@ -5,6 +5,9 @@
  * This program is a simple FastifyWebsocket server.
  * This is just an example. You can modify it to have the client handle more things.
  *
+ * init:
+ *      node scripts/basic_mitm.js <DOFUS_INVOKER_PATH>
+ * 
  */
 
 import { join } from "path";
@@ -38,7 +41,7 @@ const main = async () => {
             api: {
                 port: 3000,
                 ws: "/ws",
-            },
+            }
         }
     );
 
@@ -149,7 +152,7 @@ const main = async () => {
                 "binaries",
                 "botofu_protocol_parser_win.exe"
             ),
-            input: "e:/ankama/Dofus/DofusInvoker.swf",
+            input: process.argv[2],
             output: join(
                 constants.ROOT,
                 "bin",
