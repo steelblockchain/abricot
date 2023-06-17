@@ -10,8 +10,12 @@ import {
     Dofus2Packet,
 } from "dofus-module/types";
 import Dofus2NetworkProtocol from "./protocol";
-import { wrapper_get_flag } from "./protocol_reader";
-import { wrapper_set_flag } from "./protocol_writer";
+import Dofus2NetworkProtocolDeserializer, {
+    wrapper_get_flag,
+} from "./protocol_deserializer";
+import Dofus2NetworkProtocolSerializer, {
+    wrapper_set_flag,
+} from "./protocol_serializer";
 import Dofus2Reader, {
     Dofus2PrimitiveReaderMethod,
     Dofus2ReaderMethod,
@@ -21,6 +25,7 @@ import Dofus2Writer, {
     Dofus2WriterMethod,
 } from "./writer";
 import { AStar } from "./astar";
+import DofusModule from "./module";
 
 export {
     // types/interfaces
@@ -39,13 +44,17 @@ export {
 
 export default {
     // class
+    Dofus2Reader,
+    Dofus2Writer,
     Dofus2PacketReader,
     Dofus2PacketWriter,
     Dofus2NetworkProtocol,
-    Dofus2Reader,
-    Dofus2Writer,
+    Dofus2NetworkProtocolDeserializer,
+    Dofus2NetworkProtocolSerializer,
     AStar,
     // function
     wrapper_get_flag,
     wrapper_set_flag,
+    // module
+    DofusModule,
 };

@@ -27,9 +27,8 @@ To get a local copy up and running follow these simple example steps.
 
 This project use [Botofu procotol json format](https://gitlab.com/botofu/botofu/-/tree/dev/src/botofu/protocol/parser)
 
-[MITM example](https://github.com/steelblockchain/abricot/blob/main/scripts/mitm.js) 
-
-[interact example](https://github.com/steelblockchain/abricot/blob/main/scripts/interact.js)
+If you want an example of how to implement a basic MITM.
+[MITM server example](https://github.com/steelblockchain/abricot/blob/main/scripts/basic_mitm.js) and the client is [here](https://github.com/steelblockchain/abricot/blob/main/scripts/basic_mitm.html)
 
 # Roadmap
 

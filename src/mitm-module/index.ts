@@ -1,5 +1,6 @@
 import Frida from "./frida";
 import Scanner from "./scanner";
+import MITMModule, { MITMModuleEvent } from "./module";
 import { SCRIPTS } from "./scripts";
 
 import {
@@ -24,9 +25,12 @@ export {
     ScannerReceivePayload,
     ScannerSendPayload,
     ScannerType,
+    // MITM
+    MITMModuleEvent,
 };
 
 export default {
+    MITMModule,
     Frida,
     Scanner,
     SCRIPTS,

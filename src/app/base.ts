@@ -15,8 +15,8 @@ export type ModuleType<Module extends BaseModule> = {
 };
 
 export default class BaseApp {
-    private readonly modules: BaseAppModuleMap<BaseModule>;
-    private readonly logger: winston.Logger;
+    public readonly logger: winston.Logger;
+    protected readonly modules: BaseAppModuleMap<BaseModule>;
     protected readonly config: Record<string, any>;
 
     constructor(
@@ -38,6 +38,7 @@ export default class BaseApp {
 
         for (let module in this.modules) {
             this.modules[module].set_logger(this.logger);
+            this.modules[module].import();
         }
     }
 
@@ -53,20 +54,28 @@ export default class BaseApp {
         const module_instance = new module(this.config, ...params);
         module_instance.set_logger(this.logger);
         this.modules[key] = module_instance;
-        this.logger.log("info", `'${key}' module imported`);
+        this.modules[key].import();
+        this.logger.log("info", `imported '${key}' module`);
         return module_instance;
     }
 
     dispose_module(...modules: Array<string>): void {
         for (let module of modules) {
             if (!this.modules[module]) {
-                throw new Error(`key '${module}' not found`);
+                throw new Error(`module '${module}' not found`);
             }
+            this.modules[module].dispose();
             delete this.modules[module];
         }
     }
 
-    has_module(module: string): BaseModule | undefined {
-        return this.modules[module];
+    has_module<T extends BaseModule>(module: string): T | undefined {
+        if (this.modules[module]) {
+            return this.modules[module] as T;
+        }
+    }
+
+    current_modules(): Array<string> {
+        return Object.keys(this.modules);
     }
 }

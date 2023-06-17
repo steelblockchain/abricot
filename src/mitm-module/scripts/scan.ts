@@ -1,7 +1,7 @@
 // @ts-nocheck
-const connect_p = Module.getExportByName(null, "connect");
-const send_p = Module.getExportByName(null, "send");
-const recv_p = Module.getExportByName(null, "recv");
+var connect_p = Module.getExportByName(null, "connect");
+var send_p = Module.getExportByName(null, "send");
+var recv_p = Module.getExportByName(null, "recv");
 
 Interceptor.attach(connect_p, {
     onEnter: function (args) {
@@ -61,7 +61,12 @@ Interceptor.attach(send_p, {
                 data_length: this.send_len,
             };
 
-            send(message, buffer.readByteArray(this.send_len));
+            const length = this.send_len;
+            const bufferData = buffer.readByteArray(length);
+
+            setImmediate(() => {
+                send(message, bufferData);
+            });
         }
     },
 });
@@ -94,7 +99,11 @@ Interceptor.attach(recv_p, {
                 data_length: length,
             };
 
-            send(message, buffer.readByteArray(length));
+            const bufferData = buffer.readByteArray(length);
+
+            setImmediate(() => {
+                send(message, bufferData);
+            });
         }
     },
 });

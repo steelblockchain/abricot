@@ -1,0 +1,43 @@
+<!--
+    CODE TO TEST THE WS SERVER
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>
+
+<script>
+
+const client = new WebSocket("ws://localhost:3000/ws");
+
+client.addEventListener("message", (e) => {
+    console.log(JSON.parse(e.data).payload);
+});
+
+client.addEventListener("open", async () => {
+    client.send(
+        JSON.stringify({
+            type: "list",
+        })
+    );
+
+    client.send(
+        JSON.stringify({
+            type: "module",
+            module: "mitm-module",
+            action: "create_scanner",
+            params: {
+                pid: 18908, // REPLACE THIS BY YOUR PROGRAM PID
+            },
+        })
+    );
+});
+
+</script>

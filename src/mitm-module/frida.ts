@@ -24,7 +24,7 @@ export default class Frida {
         data?: Buffer,
         callback?: FridaScriptMessageHandler
     ): Promise<boolean> {
-        return await this.load_script(
+        return this.load_script(
             name,
             SCRIPTS[name],
             message,
@@ -45,7 +45,11 @@ export default class Frida {
         }
 
         if (!this.session) {
-            this.session = await attach(this.pid);
+            try {
+                this.session = await attach(this.pid);
+            } catch {
+                return false;
+            }
         }
 
         const session_script = await this.session.createScript(script);
@@ -56,7 +60,7 @@ export default class Frida {
             });
         }
 
-        await session_script.load();
+        session_script.load();
 
         if (message || data) {
             session_script.post(message, data);
@@ -66,7 +70,7 @@ export default class Frida {
         return true;
     }
 
-    unload_script(name: keyof typeof this.scripts): boolean {
+    unload_script(name: string): boolean {
         if (!this.scripts[name]) {
             return false;
         }
@@ -75,7 +79,11 @@ export default class Frida {
         return true;
     }
 
-    get_script(name: keyof typeof this.scripts): Script {
+    get_script(name: string): Script {
         return this.scripts[name];
+    }
+
+    get_pid(): number {
+        return this.pid;
     }
 }

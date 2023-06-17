@@ -11,11 +11,19 @@ export default abstract class BaseModule<
         winston.createLogger();
     protected logger?: winston.Logger;
 
+    constructor(config: Record<string, any>) {
+        super();
+    }
+
     set_logger(logger: winston.Logger) {
         this.logger = logger;
     }
 
-    get_logger(): winston.Logger {
+    get_logger(): Readonly<winston.Logger> {
         return this.logger ?? BaseModule.__default_logger__;
     }
+
+    abstract import(): void;
+    abstract dispose(): void;
 }   
+

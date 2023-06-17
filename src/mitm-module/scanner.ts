@@ -37,7 +37,7 @@ export default class Scanner {
     }
 
     async start(): Promise<boolean> {
-        return await this.frida.load_pscript(
+        return this.frida.load_pscript(
             "scan",
             undefined,
             undefined,
@@ -58,5 +58,9 @@ export default class Scanner {
                 }
             }
         );
+    }
+
+    get_frida(): Readonly<Frida> {
+        return this.frida;
     }
 }
