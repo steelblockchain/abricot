@@ -1,5 +1,11 @@
 # abricot
 
+## 0.0.8
+
+### Patch Changes
+
+- 59859a3: fix deserializer + improve fastify app
+
 ## 0.0.7
 
 ### Patch Changes
