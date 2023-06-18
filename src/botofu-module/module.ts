@@ -2,13 +2,16 @@ import BaseModule from "app/module";
 import { botofu_parser } from "./parser";
 import Loader from "./loader";
 import { mark_function } from "app/utils";
+import constants from "../constants";
+import { join } from "path";
+import { platform } from "os";
 
 export type BotofuModuleEvent = {
     onParsed: (params: ParseParams) => void;
 };
 
 export type ParseParams = {
-    executable: string;
+    executable?: string;
     input: string;
     output: string;
 };
@@ -37,7 +40,18 @@ export default class BotofuModule extends BaseModule<BotofuModuleEvent> {
             output: "",
         }
     ) {
-        const r = botofu_parser(executable, input, output);
+        const r = botofu_parser(
+            executable ??
+                join(
+                    constants.ROOT,
+                    "binaries",
+                    platform() === "win32"
+                        ? "botofu_protocol_parser_win.exe"
+                        : "botofu_protocol_parser_linux"
+                ),
+            input,
+            output
+        );
         if (r) {
             this.emit("onParsed", { executable, input, output });
 
