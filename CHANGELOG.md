@@ -1,5 +1,11 @@
 # abricot
 
+## 0.0.10
+
+### Patch Changes
+
+- 554910b: little fix on every Module class
+
 ## 0.0.9
 
 ### Patch Changes
