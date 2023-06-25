@@ -30,6 +30,8 @@ This project use [Botofu procotol json format](https://gitlab.com/botofu/botofu/
 If you want an example of how to implement a basic MITM.
 [MITM server example](https://github.com/steelblockchain/abricot/blob/main/scripts/basic_mitm.js) and the client is [here](https://github.com/steelblockchain/abricot/blob/main/scripts/basic_mitm.html)
 
+This example is a little bit outdated ( it can still work ) but i'll change it soon for a better version.
+
 # Roadmap
 
 - [x] Add Changelog

@@ -11,9 +11,10 @@ export type BotofuModuleEvent = {
 };
 
 export type ParseParams = {
-    executable?: string;
     input: string;
     output: string;
+    executable?: string;
+    force?: boolean;
 };
 
 export type HasLoaderParams = {
@@ -34,12 +35,16 @@ export default class BotofuModule extends BaseModule<BotofuModuleEvent> {
     }
 
     parse(
-        { executable, input, output }: ParseParams = {
+        { executable, input, output, force }: ParseParams = {
             executable: "",
             input: "",
             output: "",
+            force: false,
         }
     ) {
+        if (this.loaders[output] && !force) {
+            return;
+        }
         const r = botofu_parser(
             executable ??
                 join(
@@ -53,7 +58,7 @@ export default class BotofuModule extends BaseModule<BotofuModuleEvent> {
             output
         );
         if (r) {
-            this.emit("onParsed", { executable, input, output });
+            this.emit("onParsed", { executable, input, output, force });
 
             this.loaders[output] = new Loader(output);
         }

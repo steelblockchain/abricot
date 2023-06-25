@@ -12,12 +12,12 @@
 
 import { join } from "path";
 import {
-    FastifyApp as fapp,
+    Fastify as fapp,
     MITM as mitm,
     Botofu as botofu,
     Dofus as dofus,
     constants,
-} from "../dist/index.js";
+} from "../dist/index.js"; // replace this by abricot
 
 const wrap_result = (type, result) => {
     return {

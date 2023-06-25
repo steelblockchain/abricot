@@ -78,4 +78,8 @@ export default class BaseApp {
     current_modules(): Array<string> {
         return Object.keys(this.modules);
     }
+
+    get_config(): Readonly<Record<string, any>> {
+        return this.config;
+    }
 }

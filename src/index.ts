@@ -1,6 +1,6 @@
 import App from "app";
 import IO from "io";
-import FastifyApp from "fastify-app";
+import Fastify from "fastify-app";
 import Dofus, {
     Dofus2PacketSide,
     Dofus2NetworkType,
@@ -28,10 +28,10 @@ import Vegapunk, {
     SharedDeepQNetworkOptions,
 } from "vegapunk-module";
 import Botofu from "botofu-module";
-import { FilterStartWith, FilterNotStartWith } from "types";
+import { FilterStartWith, FilterNotStartWith } from "./types";
 import constants from "./constants";
 
-export { App, FastifyApp, IO, Dofus, MITM, Vegapunk, Botofu, constants };
+export { App, Fastify, IO, Dofus, MITM, Vegapunk, Botofu, constants };
 export {
     FilterStartWith,
     FilterNotStartWith,

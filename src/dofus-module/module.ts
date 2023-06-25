@@ -9,7 +9,6 @@ import {
     Dofus2PacketSide,
 } from "./types";
 import Dofus2Reader from "./reader";
-import { GPU } from "gpu.js";
 import Dofus2NetworkProtocolDeserializer from "./protocol_deserializer";
 
 export type DofusModuleEvent = {
@@ -61,8 +60,6 @@ export type LoaderGetter = (output_path: string) => {
 };
 
 export default class DofusModule extends BaseModule<DofusModuleEvent> {
-    private static readonly gpu: GPU = new GPU();
-
     protected readonly analyzers: Record<
         string,
         {

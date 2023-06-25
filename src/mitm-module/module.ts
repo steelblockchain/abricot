@@ -15,8 +15,14 @@ export type HasScannerParams = {
     pid: number;
 };
 
+export type SendClientParams = {
+    pid: number;
+    fd: number;
+    buffer: Buffer | { data: Array<number> };
+};
+
 export type MITMModuleEvent = {
-    onScannerCreate: (scanner: Scanner) => void;
+    onScannerCreate: (scanner: Scanner, pid: number) => void;
     onScannerConnect: (
         scanner: Scanner,
         payload: ScannerConnectPayload
@@ -44,10 +50,12 @@ export default class MITMModule extends BaseModule<MITMModuleEvent> {
         // add to WS_API
         mark_function(this.create_scanner, "ws_api");
         mark_function(this.has_scanner, "ws_api");
+        mark_function(this.send_client, "ws_api");
     }
 
     create_scanner({ pid }: CreateScannerParams = { pid: 0 }): void {
         if (this.scanners[pid]) {
+            this.emit("onScannerCreate", this.scanners[pid], pid);
             this.get_logger().log("error", `scanner already exists on ${pid}`);
             return;
         }
@@ -70,7 +78,7 @@ export default class MITMModule extends BaseModule<MITMModuleEvent> {
 
         this.scanners[pid].start().then((created) => {
             if (created) {
-                this.emit("onScannerCreate", this.scanners[pid]);
+                this.emit("onScannerCreate", this.scanners[pid], pid);
                 this.get_logger().log("info", `scanner started on pid ${pid}`);
                 this.scanners[pid].get_frida().load_pscript("funcs").catch();
             } else {
@@ -81,6 +89,21 @@ export default class MITMModule extends BaseModule<MITMModuleEvent> {
 
     has_scanner({ pid }: HasScannerParams = { pid: 0 }) {
         return pid in this.scanners;
+    }
+
+    send_client({ pid, fd, buffer }: SendClientParams): boolean {
+        if (!this.has_scanner({ pid })) {
+            return false;
+        }
+
+        const buff = "data" in buffer ? Buffer.from(buffer.data) : buffer;
+
+        this.scanners[pid]
+            .get_frida()
+            .get_script("funcs")
+            .exports.send_client(fd, buff, buff.length);
+
+        return true;
     }
 
     import(): void {}

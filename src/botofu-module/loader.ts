@@ -28,10 +28,6 @@ export default class Loader {
                 undefined,
                 undefined
             );
-            /*return JSONPath({
-                path: `$.${protocol}[?(@.name === "${identifier}")]`,
-                json: this.protocol,
-            });*/
         }
         if (typeof identifier === "number") {
             return this.json_path.evaluate(
@@ -40,10 +36,6 @@ export default class Loader {
                 undefined,
                 undefined
             );
-            /*return JSONPath({
-                path: `$.${protocol}[?(@.protocolID === ${identifier})]`,
-                json: this.protocol,
-            });*/
         }
         throw new Error("undefined identifier");
     }
