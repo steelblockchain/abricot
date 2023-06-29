@@ -25,7 +25,7 @@ export type MITMModuleEvent = {
     onScannerCreate: (
         scanner: Scanner,
         pid: number,
-        result: "create" | "already_exist" | "invalid"
+        result: "create" | "already_exist"
     ) => void;
     onScannerConnect: (
         scanner: Scanner,
@@ -69,7 +69,7 @@ export default class MITMModule extends BaseModule<MITMModuleEvent> {
             return;
         }
 
-        this.scanners[pid] = new Scanner(
+        const scanner = new Scanner(
             pid,
             (payload) => {
                 this.emit("onScannerConnect", this.scanners[pid], payload);
@@ -85,19 +85,12 @@ export default class MITMModule extends BaseModule<MITMModuleEvent> {
             }
         );
 
-        this.scanners[pid].start().then((created) => {
+        scanner.start().then((created) => {
             if (created) {
                 this.emit("onScannerCreate", this.scanners[pid], pid, "create");
                 this.get_logger().log("info", `scanner started on pid ${pid}`);
                 this.scanners[pid].get_frida().load_pscript("funcs").catch();
-            } else {
-                this.emit(
-                    "onScannerCreate",
-                    this.scanners[pid],
-                    pid,
-                    "invalid"
-                );
-                delete this.scanners[pid];
+                this.scanners[pid] = scanner;
             }
         });
     }
