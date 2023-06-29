@@ -1,5 +1,11 @@
 # abricot
 
+## 0.0.11
+
+### Patch Changes
+
+- ebcc0ee: add more information on mitm creation result
+
 ## 0.0.10
 
 ### Patch Changes
