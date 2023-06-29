@@ -1,5 +1,11 @@
 # abricot
 
+## 0.0.12
+
+### Patch Changes
+
+- 45aa847: fix 0.0.10
+
 ## 0.0.11
 
 ### Patch Changes
