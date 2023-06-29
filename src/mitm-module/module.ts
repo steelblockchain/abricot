@@ -127,6 +127,9 @@ export default class MITMModule extends BaseModule<MITMModuleEvent> {
                     .load_pscript("funcs")
                     .catch();
                 this.scanners[pid].state = "ready";
+            }else {
+                this.get_logger().log("error", `unable to create scanner on pid ${pid}`)
+                delete this.scanners[pid];
             }
         });
     }
