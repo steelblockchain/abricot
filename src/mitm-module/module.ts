@@ -44,7 +44,13 @@ export type MITMModuleEvent = {
 };
 
 export default class MITMModule extends BaseModule<MITMModuleEvent> {
-    private readonly scanners: Record<number, Scanner>;
+    private readonly scanners: Record<
+        number,
+        {
+            state: "ready" | "waiting";
+            scanner: Scanner;
+        }
+    >;
 
     constructor(config: Record<string, any>) {
         super(config);
@@ -59,38 +65,68 @@ export default class MITMModule extends BaseModule<MITMModuleEvent> {
 
     create_scanner({ pid }: CreateScannerParams = { pid: 0 }): void {
         if (this.scanners[pid]) {
-            this.emit(
-                "onScannerCreate",
-                this.scanners[pid],
-                pid,
-                "already_exist"
-            );
-            this.get_logger().log("error", `scanner already exists on ${pid}`);
+            if (this.scanners[pid].state === "ready") {
+                this.emit(
+                    "onScannerCreate",
+                    this.scanners[pid].scanner,
+                    pid,
+                    "already_exist"
+                );
+                this.get_logger().log(
+                    "error",
+                    `scanner already exists on ${pid}`
+                );
+            }
             return;
         }
 
-        const scanner = new Scanner(
-            pid,
-            (payload) => {
-                this.emit("onScannerConnect", this.scanners[pid], payload);
-            },
-            (payload, buffer) => {
-                this.emit("onScannerRecv", this.scanners[pid], payload, buffer);
-            },
-            (payload, buffer) => {
-                this.emit("onScannerSend", this.scanners[pid], payload, buffer);
-            },
-            (error) => {
-                this.get_logger().log("error", error.description);
-            }
-        );
+        this.scanners[pid] = {
+            state: "waiting",
+            scanner: new Scanner(
+                pid,
+                (payload) => {
+                    this.emit(
+                        "onScannerConnect",
+                        this.scanners[pid].scanner,
+                        payload
+                    );
+                },
+                (payload, buffer) => {
+                    this.emit(
+                        "onScannerRecv",
+                        this.scanners[pid].scanner,
+                        payload,
+                        buffer
+                    );
+                },
+                (payload, buffer) => {
+                    this.emit(
+                        "onScannerSend",
+                        this.scanners[pid].scanner,
+                        payload,
+                        buffer
+                    );
+                },
+                (error) => {
+                    this.get_logger().log("error", error.description);
+                }
+            ),
+        };
 
-        scanner.start().then((created) => {
+        this.scanners[pid].scanner.start().then((created) => {
             if (created) {
-                this.emit("onScannerCreate", this.scanners[pid], pid, "create");
+                this.emit(
+                    "onScannerCreate",
+                    this.scanners[pid].scanner,
+                    pid,
+                    "create"
+                );
                 this.get_logger().log("info", `scanner started on pid ${pid}`);
-                this.scanners[pid].get_frida().load_pscript("funcs").catch();
-                this.scanners[pid] = scanner;
+                this.scanners[pid].scanner
+                    .get_frida()
+                    .load_pscript("funcs")
+                    .catch();
+                this.scanners[pid].state = "ready";
             }
         });
     }
@@ -106,7 +142,7 @@ export default class MITMModule extends BaseModule<MITMModuleEvent> {
 
         const buff = "data" in buffer ? Buffer.from(buffer.data) : buffer;
 
-        this.scanners[pid]
+        this.scanners[pid].scanner
             .get_frida()
             .get_script("funcs")
             .exports.send_client(fd, buff, buff.length);
