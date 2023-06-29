@@ -22,7 +22,11 @@ export type SendClientParams = {
 };
 
 export type MITMModuleEvent = {
-    onScannerCreate: (scanner: Scanner, pid: number) => void;
+    onScannerCreate: (
+        scanner: Scanner,
+        pid: number,
+        result: "create" | "already_exist" | "invalid"
+    ) => void;
     onScannerConnect: (
         scanner: Scanner,
         payload: ScannerConnectPayload
@@ -55,7 +59,12 @@ export default class MITMModule extends BaseModule<MITMModuleEvent> {
 
     create_scanner({ pid }: CreateScannerParams = { pid: 0 }): void {
         if (this.scanners[pid]) {
-            this.emit("onScannerCreate", this.scanners[pid], pid);
+            this.emit(
+                "onScannerCreate",
+                this.scanners[pid],
+                pid,
+                "already_exist"
+            );
             this.get_logger().log("error", `scanner already exists on ${pid}`);
             return;
         }
@@ -78,10 +87,16 @@ export default class MITMModule extends BaseModule<MITMModuleEvent> {
 
         this.scanners[pid].start().then((created) => {
             if (created) {
-                this.emit("onScannerCreate", this.scanners[pid], pid);
+                this.emit("onScannerCreate", this.scanners[pid], pid, "create");
                 this.get_logger().log("info", `scanner started on pid ${pid}`);
                 this.scanners[pid].get_frida().load_pscript("funcs").catch();
             } else {
+                this.emit(
+                    "onScannerCreate",
+                    this.scanners[pid],
+                    pid,
+                    "invalid"
+                );
                 delete this.scanners[pid];
             }
         });
