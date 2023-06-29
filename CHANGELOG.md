@@ -1,5 +1,11 @@
 # abricot
 
+## 0.0.14
+
+### Patch Changes
+
+- ac827b1: mitm-module create_scanner fix
+
 ## 0.0.13
 
 ### Patch Changes
