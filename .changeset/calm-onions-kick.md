@@ -1,5 +1,0 @@
----
-"abricot": patch
----
-
-rm tensor

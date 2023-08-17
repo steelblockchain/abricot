@@ -1,5 +1,11 @@
 # abricot
 
+## 0.0.15
+
+### Patch Changes
+
+- 9cfc674: rm tensor
+
 ## 0.0.14
 
 ### Patch Changes
