@@ -23,15 +23,11 @@ import MITM, {
     ScannerSendPayload,
     ScannerType,
 } from "mitm-module";
-import Vegapunk, {
-    GWalletCredentials,
-    SharedDeepQNetworkOptions,
-} from "vegapunk-module";
 import Botofu from "botofu-module";
 import { FilterStartWith, FilterNotStartWith } from "./types";
 import constants from "./constants";
 
-export { App, Fastify, IO, Dofus, MITM, Vegapunk, Botofu, constants };
+export { App, Fastify, IO, Dofus, MITM, Botofu, constants };
 export {
     FilterStartWith,
     FilterNotStartWith,
@@ -45,9 +41,6 @@ export {
     Dofus2Packet,
     Dofus2PrimitiveReaderMethod,
     Dofus2ReaderMethod,
-    // vegapunk-types
-    GWalletCredentials,
-    SharedDeepQNetworkOptions,
     // mitm-types
     SCRIPTS_TYPE,
     ScannerConnectHandler,
