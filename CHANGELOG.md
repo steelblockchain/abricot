@@ -1,5 +1,11 @@
 # abricot
 
+## 0.0.16
+
+### Patch Changes
+
+- ec6fbee: fix mitm client_send
+
 ## 0.0.15
 
 ### Patch Changes
