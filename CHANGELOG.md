@@ -1,5 +1,11 @@
 # abricot
 
+## 0.0.17
+
+### Patch Changes
+
+- 86e6316: add encode_message + fix varInt
+
 ## 0.0.16
 
 ### Patch Changes
