@@ -9,6 +9,7 @@
     <title>Document</title>
 </head>
 <body>
+    <button onclick="sendMessage()">send</button>
     
 </body>
 </html>
@@ -17,8 +18,52 @@
 
 const client = new WebSocket("ws://localhost:3000/ws");
 
+let pid = 26288;// REPLACE THIS BY YOUR PROGRAM PID
+let protocol = "E:\\abricot-test\\abricot\\bin\\protocol_26288.json";
+
+
+let fd = -1;
+let objectUID = -1;
+
 client.addEventListener("message", (e) => {
-    console.log(JSON.parse(e.data).payload);
+    const data = JSON.parse(e.data);
+    if(data.type === "dofus:message") {
+        const message = data.payload.m;
+        if(message.__name__ === "ProtocolRequired") {
+            console.log(data)
+            const m = data.payload.key.split("&").reduce((acc, curr) => {
+                const vs = curr.split("=");
+                return {
+                    ...acc,
+                    [vs[0]]: vs[1]
+                }
+            }, {});
+            
+            fd = Number(m["fd"]);
+        }
+        if(message.__name__ === "ObjectAddedMessage") {
+            console.log(message);
+            objectUID = message.object.objectUID
+        }
+
+        if(message.__name__ === "ExchangeObjectMoveMessage") {
+            console.log(data);
+        }
+    } else if(data.type === "fastify:module") {
+        if(data.payload.module === "dofus-module" && data.payload.action === "encode_message") {
+            console.log(pid, fd, data.payload.result)
+            client.send(JSON.stringify({
+                type: "module",
+                module: "mitm-module",
+                action: "send_client",
+                params: {
+                    pid,
+                    fd,
+                    buffer: data.payload.result
+                }
+            }));
+        }        
+    }
 });
 
 client.addEventListener("open", async () => {
@@ -34,10 +79,31 @@ client.addEventListener("open", async () => {
             module: "mitm-module",
             action: "create_scanner",
             params: {
-                pid: 18908, // REPLACE THIS BY YOUR PROGRAM PID
+                pid, 
             },
         })
     );
 });
+
+function sendMessage() {
+    client.send(JSON.stringify({
+        type: "module",
+        module: "dofus-module",
+        action: "encode_message",
+        params: {
+            protocol,
+            identifier: "ExchangeObjectMoveMessage",
+            instance_id: 200,
+            data: {
+                __id__: 1343,
+                __name__: "ExchangeObjectMoveMessage",
+                objectUID,
+                quantity: 1
+            },
+            type: "message",
+            side: "client"
+        }
+    }));
+}
 
 </script>

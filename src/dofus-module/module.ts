@@ -10,6 +10,9 @@ import {
 } from "./types";
 import Dofus2Reader from "./reader";
 import Dofus2NetworkProtocolDeserializer from "./protocol_deserializer";
+import Dofus2Writer from "./writer";
+import Dofus2NetworkProtocolSerializer from "./protocol_serializer";
+import Dofus2PacketWriter from "./packet_writer";
 
 export type DofusModuleEvent = {
     onAnalyzerCreate: (key: string) => void;
@@ -51,6 +54,15 @@ export type DecodeMessageParams = {
     side: Dofus2PacketSide;
 };
 
+export type EncodeMessageParams = {
+    protocol: string;
+    identifier: string | number;
+    instance_id?: number;
+    data: Dofus2NetworkData;
+    type: Dofus2NetworkType;
+    side: Dofus2PacketSide;
+};
+
 export type ElementGetter = (
     protocol: "messages" | "types",
     identifier: string | number
@@ -80,6 +92,7 @@ export default class DofusModule extends BaseModule<DofusModuleEvent> {
         mark_function(this.create_analyzer, "ws_api");
         mark_function(this.push_analyzer, "ws_api");
         mark_function(this.decode_message, "ws_api");
+        mark_function(this.encode_message, "ws_api");
         mark_function(this.push_and_decode, "ws_api");
     }
 
@@ -161,6 +174,48 @@ export default class DofusModule extends BaseModule<DofusModuleEvent> {
         if (data) {
             this.emit("onDofusMessage", key, side, data);
         }
+    }
+
+    encode_message(
+        { protocol, identifier, instance_id, data, type, side }: EncodeMessageParams = {
+            protocol: "",
+            identifier: 0,
+            data: { __id__: 0, __name__: "" },
+            type: "message",
+            side: "client",
+        }
+    ): Buffer {
+        const loader = this.loader_getter(protocol);
+
+        const message_getter = (identifier: string | number) =>
+            loader.element_getter("messages", identifier).shift();
+
+        const type_getter = (identifier: string | number) =>
+            loader.element_getter("types", identifier).shift();
+
+        const buffer = Dofus2NetworkProtocolSerializer.serialize(
+            identifier,
+            data,
+            type,
+            message_getter,
+            type_getter
+        );
+
+        const packet = new Dofus2PacketWriter();
+        if(buffer) {
+            const base = message_getter(identifier);
+
+            packet.build({
+                id: base?.protocolID ?? 0,
+                instance_id: instance_id,
+                side: side,
+                data: buffer,
+                length: buffer.length,
+                timestamp: new Date()
+            });
+        }       
+
+        return packet.data();
     }
 
     push_and_decode(

@@ -24,10 +24,10 @@ export default class Dofus2Writer extends WriterBigEndianStream {
             if (has_next) {
                 byte |= MASK_10000000;
             }
-
-            this.writeByte(byte);
+            this.writeUnsignedByte(byte);
         } while (has_next);
     }
+
     write_var_short(value: number) {
         this.write_var(value);
     }
