@@ -148,7 +148,7 @@ export default class MITMModule extends BaseModule<MITMModuleEvent> {
         this.scanners[pid].scanner
             .get_frida()
             .get_script("funcs")
-            .exports.send_client(fd, buff, buff.length);
+            .exports.client_send(fd, buff, buff.length);
 
         return true;
     }
