@@ -27,6 +27,7 @@ let objectUID = -1;
 
 client.addEventListener("message", (e) => {
     const data = JSON.parse(e.data);
+    console.log(data)
     if(data.type === "dofus:message") {
         const message = data.payload.m;
         if(message.__name__ === "ProtocolRequired") {
