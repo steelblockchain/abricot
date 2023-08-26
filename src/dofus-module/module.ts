@@ -55,7 +55,7 @@ export type DecodeMessageParams = {
 };
 
 export type EncodeMessageParams = {
-    protocol: string;
+    key: string;
     identifier: string | number;
     instance_id?: number;
     data: Dofus2NetworkData;
@@ -177,14 +177,22 @@ export default class DofusModule extends BaseModule<DofusModuleEvent> {
     }
 
     encode_message(
-        { protocol, identifier, instance_id, data, type, side }: EncodeMessageParams = {
-            protocol: "",
+        {
+            key,
+            identifier,
+            instance_id,
+            data,
+            type,
+            side,
+        }: EncodeMessageParams = {
+            key: "",
             identifier: 0,
             data: { __id__: 0, __name__: "" },
             type: "message",
             side: "client",
         }
     ): Buffer {
+        const protocol = this.analyzers[key].protocol;
         const loader = this.loader_getter(protocol);
 
         const message_getter = (identifier: string | number) =>
@@ -202,7 +210,7 @@ export default class DofusModule extends BaseModule<DofusModuleEvent> {
         );
 
         const packet = new Dofus2PacketWriter();
-        if(buffer) {
+        if (buffer && type === "message") {
             const base = message_getter(identifier);
 
             packet.build({
@@ -211,9 +219,9 @@ export default class DofusModule extends BaseModule<DofusModuleEvent> {
                 side: side,
                 data: buffer,
                 length: buffer.length,
-                timestamp: new Date()
+                timestamp: new Date(),
             });
-        }       
+        }
 
         return packet.data();
     }
